@@ -36,7 +36,7 @@ Dengan kemampuan deep learning yang tinggi dalam menangkap pola laten kompleks, 
 
 ---
 
-### 🎯 Objectives (Revisi)
+### 🎯 Objectives 
 
 1. **Membangun sistem rekomendasi berbasis deep learning** yang dapat mempelajari representasi laten dari pengguna dan film menggunakan pendekatan *neural collaborative filtering (NCF)*.
 2. **Mengintegrasikan embedding pengguna dan film dengan metadata film**, seperti rating rata-rata film (`movie_rating`) dan tahun rilis (`year`), untuk memperkaya fitur input model dan meningkatkan kualitas prediksi.
