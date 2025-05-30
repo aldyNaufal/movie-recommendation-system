@@ -172,6 +172,173 @@ data_rating[data_rating.duplicated()]
 * Genre action dengan tambahan subgenre seperti adventure dan thriller berada di posisi yang lebih rendah, tapi tetap signifikan.
 * Informasi ini bisa berguna untuk memahami preferensi pasar dan tren genre film yang banyak diproduksi serta diminati.
 
+---
+
+## 🧹 6. Data Preparation
+
+Setelah dilakukan eksplorasi dan penggabungan antara data `movies.csv` dan `ratings.csv`, dilakukan tahap **data preparation** untuk memastikan kualitas data siap untuk digunakan dalam proses pemodelan. Langkah-langkah ini dilakukan secara sistematis berdasarkan temuan eksplorasi data dan kebutuhan algoritma rekomendasi yang akan digunakan.
+
+---
+
+### 📌 Temuan Kunci dan Strategi Preprocessing
+
+1. **Format Judul Film Tidak Konsisten:**
+   Beberapa judul film mengandung tahun rilis dalam tanda kurung yang perlu dipisahkan agar kolom `title` bersih dan kolom `year` dapat digunakan sebagai fitur numerik. Regex digunakan untuk mengekstrak `year` dan membersihkan `title`.
+
+2. **Genre Berbentuk String Gabungan:**
+   Kolom `genres` awalnya berisi string panjang dengan delimiter `'|'`. Untuk mempermudah analisis konten dan kompatibilitas pemrosesan NLP atau representasi multi-label, karakter pemisah diubah menjadi koma, dan teks dijadikan huruf kecil.
+
+3. **Missing Value pada Kolom Year:**
+   Terdapat nilai kosong pada kolom `year` akibat film yang tidak mencantumkan tahun pada `title`. Baris-baris ini dihapus karena informasi tahun dianggap penting dan tidak dapat diimputasi secara akurat.
+
+4. **Timestamp Rating:**
+   Kolom `timestamp` dikonversi menjadi format waktu agar bisa dimanfaatkan lebih lanjut, seperti ekstraksi waktu menonton jika dibutuhkan (tidak digunakan dalam model saat ini).
+
+5. **Rata-Rata Rating Film:**
+   Untuk menambahkan informasi global tentang kualitas film, dihitung rata-rata rating (`movie_rating`) dari setiap `movieId`. Ini memberikan konteks tambahan pada film di luar penilaian individu pengguna.
+
+---
+
+### 📋 Rangkuman Langkah-Langkah Preprocessing:
+
+| Langkah               | Penjelasan                                                                                                                                                                      |                                                                                                    |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Ekstraksi Tahun**   | Menggunakan **regex** untuk mengekstrak angka 4 digit dalam kurung pada `title`, lalu dipindahkan ke kolom baru `year`. Judul diformat ulang menjadi lowercase dan tanpa tahun. |                                                                                                    |
+| **Pembersihan Genre** | Genre diformat menjadi **huruf kecil** dan delimiter \`                                                                                                                         | `diubah menjadi`,\` agar mudah diolah dan lebih kompatibel untuk representasi fitur berbasis teks. |
+| **Missing Value**     | Baris dengan `year` kosong dihapus karena dianggap sebagai fitur penting dan sulit diimputasi secara akurat.                                                                    |                                                                                                    |
+| **Gabung Dataset**    | Data `ratings` digabung dengan data film (`movies`) berdasarkan `movieId`. Hal ini dilakukan agar setiap rating memiliki metadata terkait film.                                 |                                                                                                    |
+| **Rata-Rata Rating**  | Dihitung rata-rata rating per `movieId` sebagai representasi kualitas umum film, dan ditambahkan ke dalam dataset sebagai kolom `movie_rating`.                                 |                                                                                                    |
+| **Encoding ID**       | Menggunakan **Label Encoding** untuk `userId` dan `movieId` karena akan digunakan sebagai input numerik dalam model rekomendasi berbasis embedding.                             |                                                                                                    |
+| **Scaling**           | Kolom `movie_rating` dan `year` discale menggunakan **StandardScaler** karena keduanya akan dimasukkan ke dalam model sebagai fitur numerik.                                    |                                                                                                    |
+| **Data Mapping**      | Dibuat kamus untuk memetakan `userId` dan `movieId` ke bentuk terenkode dan sebaliknya, untuk keperluan interpretasi hasil prediksi model.                                      |                                                                                                    |
+| **Data Split**        | Dataset dibagi menjadi: **80% train+val**, **20% test**. Kemudian, dari train+val, diambil **10% untuk validasi**, menghasilkan rasio train\:val\:test sebesar **72%:8%:20%**.  |                                                                                                    |
+
+---
+
+### 🧭 Alasan Penggunaan Scaling dan Encoding
+
+* **StandardScaler** digunakan untuk `year` dan `movie_rating` agar keduanya berada pada skala seragam dan tidak mendominasi perhitungan jarak dalam model. Karena nilai-nilai ini tidak mengandung outlier ekstrem, **StandardScaler** lebih cocok dibanding `RobustScaler`.
+
+* **Label Encoding** pada `userId` dan `movieId` diperlukan agar data ID bisa digunakan dalam lapisan embedding model deep learning, tanpa menambah dimensi seperti pada One-Hot Encoding.
+
+---
+
+### ✅ Final Feature yang Digunakan:
+
+| Fitur             | Tipe        | Keterangan                                |
+| ----------------- | ----------- | ----------------------------------------- |
+| `user_encoded`    | Kategorikal | ID user yang sudah di-label encode        |
+| `movie_encoded`   | Kategorikal | ID film yang sudah di-label encode        |
+| `movie_rating`    | Numerik     | Rata-rata rating film                     |
+| `year`            | Numerik     | Tahun rilis film                          |
+| `rating` (target) | Numerik     | Nilai rating yang diberikan oleh pengguna |
+
+---
+
+Dengan pendekatan **berbasis data dan domain knowledge** ini, data sudah disiapkan untuk memasuki tahap **modelling rekomendasi** menggunakan pendekatan pembelajaran terawasi maupun berbasis embedding.
+
+---
+
+Berikut adalah **penjelasan lengkap model custom Neural Network (NN)** yang Anda buat, dengan gaya yang **selaras** dengan struktur dokumentasi model sebelumnya:
+
+---
+
+## 7. Modelling
+🔹 Model : **Custom Neural Network for Rating Prediction*
+### ✅ Alasan Pemilihan:
+
+Model ini dirancang khusus untuk menangani data **user-item interaction**, seperti sistem rekomendasi film berbasis rating. Model menggabungkan teknik **embedding**, **interaksi eksplisit (dot product dan element-wise multiply)**, serta **informasi tambahan** (seperti rating sebelumnya dan tahun rilis) dalam arsitektur neural network. Pendekatan ini jauh lebih fleksibel dan mampu **menangkap representasi latar belakang pengguna dan film** secara simultan.
+
+---
+
+### ⚙️ Cara Kerja:
+
+Model ini bekerja melalui beberapa tahap:
+
+1. **Embedding Layer**:
+
+   * Mengubah `user_id` dan `movie_id` menjadi representasi vektor berdimensi rendah (`embedding_dim = 64`) yang dapat dipelajari.
+   * Regularisasi L2 (`l2_reg`) digunakan untuk mencegah overfitting pada representasi pengguna dan film.
+
+2. **Interaction Features**:
+
+   * Menggunakan **dot product** dan **element-wise multiply** dari vektor user dan movie sebagai bentuk **interaksi eksplisit** antara keduanya.
+   * Dikombinasikan dengan fitur tambahan seperti `movie_rating_input` dan `year_input`.
+
+3. **Fully Connected Layers**:
+
+   * Vektor hasil concatenation melewati beberapa lapisan dense dengan ukuran `[128, 64, 32]`, masing-masing dilengkapi dengan:
+
+     * Aktivasi `ReLU`
+     * Regularisasi L2
+     * **Batch Normalization** untuk stabilitas pelatihan
+     * **Dropout (0.3)** untuk mengurangi overfitting
+
+4. **Output Layer**:
+
+   * Lapisan akhir adalah neuron tunggal dengan aktivasi linear (`Dense(1, activation='linear')`) yang merepresentasikan **prediksi rating**.
+
+---
+
+### 🧩 Struktur Arsitektur:
+
+```text
+Input:
+  - user_id (int)
+  - movie_id (int)
+  - movie_rating (float)
+  - year (int)
+
+Layers:
+  - Embedding user_id → user_vec
+  - Embedding movie_id → movie_vec
+  - Dot(user_vec, movie_vec)
+  - Multiply(user_vec, movie_vec)
+  - Concatenate([user_vec, movie_vec, dot, multiply, movie_rating, year])
+  - Dense(128) → BN → Dropout(0.3)
+  - Dense(64) → BN → Dropout(0.3)
+  - Dense(32) → BN → Dropout(0.3)
+  - Dense(1) → Output rating
+```
+
+---
+
+### ✅ Kelebihan:
+
+* **Fleksibel dan powerful**, dapat mempelajari hubungan kompleks antar pengguna dan item.
+* Menggunakan kombinasi representasi *latent* dan fitur numerik eksplisit untuk meningkatkan prediksi.
+* **Mudah dikembangkan lebih lanjut**, misalnya menambah genre, lokasi, waktu tonton, dll.
+* Sudah menggunakan teknik regularisasi modern seperti Dropout dan BatchNormalization.
+
+---
+
+### ❌ Kekurangan:
+
+* **Butuh banyak data** untuk generalisasi yang baik.
+* Interpretasi hasil lebih sulit dibanding model linear atau tree-based.
+* Proses pelatihan lebih lambat, terutama jika data besar.
+
+---
+
+### ⚙️ Konfigurasi Model:
+
+| Parameter       | Nilai                        |
+| --------------- | ---------------------------- |
+| `embedding_dim` | 64                           |
+| `hidden_units`  | \[128, 64, 32]               |
+| `dropout_rate`  | 0.3                          |
+| `l2_reg`        | 0.001                        |
+| `optimizer`     | Adam (default keras compile) |
+| `loss`          | Mean Squared Error (MSE)     |
+
+---
+
+### 📌 Summary:
+
+| Model            | Pola yang Bisa Ditangkap           | Tuning                | Interpretasi | Outlier Friendly | Hasil Akhir     |
+| ---------------- | ---------------------------------- | --------------------- | ------------ | ---------------- | --------------- |
+| Custom NN (Anda) | Non-linear, Representasi User-Item | ✅ (Manual & Flexible) | ✖️           | ✅                | **Sangat Baik** |
+
 
 ---
 
