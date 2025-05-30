@@ -15,25 +15,45 @@ from scipy.stats import pearsonr, spearmanr
 np.random.seed(42)
 tf.random.set_seed(42)
 
-def load_and_preprocess_data(path):
-    data = pd.read_csv(path)
+def load_and_preprocess_data(movies_path, ratings_path):
+    # Load data
+    data_movie = pd.read_csv(movies_path)
+    data_rating = pd.read_csv(ratings_path)
 
-    movie_metadata = data[['movieId', 'title', 'movie_rating', 'year', 'genres']].drop_duplicates().set_index('movieId')
-    user_metadata = data[['userId']].drop_duplicates()
+    # Preprocessing movies
+    data_movie['year'] = data_movie['title'].str.extract(r'\((\d{4})\)', expand=False)
+    data_movie['title'] = data_movie['title'].str.replace(r'\s*\(\d{4}\)', '', regex=True).str.lower()
+    data_movie['genres'] = data_movie['genres'].str.replace('|', ',', regex=False).str.lower()
 
+    data_movie = data_movie.dropna(subset=['year'])
+    data_movie['year'] = pd.to_numeric(data_movie['year'], errors='coerce')
+
+    # Preprocessing ratings
+    data_rating['timestamp'] = pd.to_datetime(data_rating['timestamp'], unit='s')
+
+    # Merge datasets
+    merged_data = pd.merge(data_rating, data_movie, on="movieId", how="inner")
+
+    # Hitung rata-rata rating untuk setiap movie
+    average_ratings = data_rating.groupby("movieId")["rating"].mean().round(1).reset_index()
+    average_ratings.columns = ["movieId", "movie_rating"]
+
+    # Merge rata-rata rating
+    data = pd.merge(merged_data, average_ratings, on='movieId', how='left')
+
+    # Label encoding
     user_encoder = LabelEncoder()
     movie_encoder = LabelEncoder()
     data['user_encoded'] = user_encoder.fit_transform(data['userId'])
     data['movie_encoded'] = movie_encoder.fit_transform(data['movieId'])
 
-    n_users = data['user_encoded'].nunique()
-    n_movies = data['movie_encoded'].nunique()
-
+    # Scaling
     scaler_rating = StandardScaler()
     scaler_year = StandardScaler()
     data['movie_rating_scaled'] = scaler_rating.fit_transform(data[['movie_rating']])
     data['year_scaled'] = scaler_year.fit_transform(data[['year']])
 
+    # Input features
     X = {
         'user_id': data['user_encoded'].values,
         'movie_id': data['movie_encoded'].values,
@@ -42,6 +62,8 @@ def load_and_preprocess_data(path):
     }
     y = data['rating'].values
 
+    # Metadata & mapping
+    movie_metadata = data[['movieId', 'title', 'movie_rating', 'year', 'genres']].drop_duplicates().set_index('movieId')
     mappings = {
         'user_id_to_encoded': dict(zip(data['userId'], data['user_encoded'])),
         'movie_id_to_encoded': dict(zip(data['movieId'], data['movie_encoded'])),
@@ -49,7 +71,8 @@ def load_and_preprocess_data(path):
         'encoded_to_movie_id': dict(zip(data['movie_encoded'], data['movieId']))
     }
 
-    return data, X, y, n_users, n_movies, scaler_rating, scaler_year, movie_metadata, mappings
+    return data, X, y, data['user_encoded'].nunique(), data['movie_encoded'].nunique(), scaler_rating, scaler_year, movie_metadata, mappings
+
 
 def build_model(n_users, n_movies, embedding_dim=64, hidden_units=[128, 64, 32], dropout_rate=0.3, l2_reg=0.001):
     user_input = layers.Input(shape=(), name='user_id')
@@ -88,7 +111,7 @@ def train_model(model, X_train, y_train, X_val, y_val):
     callbacks = [
         keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True),
         keras.callbacks.ReduceLROnPlateau(monitor='val_loss', patience=5, factor=0.5, min_lr=1e-6),
-        keras.callbacks.ModelCheckpoint('best_model.h5', save_best_only=True)
+        keras.callbacks.ModelCheckpoint('./models/best_model.h5', save_best_only=True)
     ]
 
     history = model.fit(
@@ -160,8 +183,9 @@ def recommend_for_user(user_id, model, movie_metadata, mappings, scaler_rating, 
     print(f"📊 Evaluated {len(candidate_movie_ids)} movies")
 
 def main():
-    data_path = "./data/data.csv"
-    data, X, y, n_users, n_movies, scaler_rating, scaler_year, movie_metadata, mappings = load_and_preprocess_data(data_path)
+    data_movies = "./data/movies.csv"
+    data_ratings = "./data/ratings.csv"
+    data, X, y, n_users, n_movies, scaler_rating, scaler_year, movie_metadata, mappings = load_and_preprocess_data(data_movies, data_ratings)
 
     # Split Data
     X_temp, X_test, y_temp, y_test = {}, {}, None, None
