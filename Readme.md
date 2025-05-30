@@ -510,11 +510,11 @@ Untuk mempermudah navigasi dan pengelolaan proyek, struktur direktori dibagi men
 ├── data
 │   ├── data.csv           # Data gabungan hasil preprocessing (siap untuk modeling)
 │   ├── movies.csv         # Dataset mentah berisi informasi film
-│   ├── rating.csv         # Dataset mentah berisi rating pengguna
+│   └── rating.csv         # Dataset mentah berisi rating pengguna
 │
 ├── models
 │   ├── final_model.keras  # Model hasil training terbaik yang disimpan
-│
+│   └── best_model.h5      # Sebagai checkpoint model ketika sedang di train
 ├── notebook
 │   ├── main.ipynb         # Notebook utama untuk pelatihan dan pengujian model
 │   └── preprocessing.ipynb # Notebook untuk pembersihan dan penggabungan data mentah
