@@ -7,17 +7,22 @@
 
 ![movie-banner](images/13067.jpg)
 
+
 ## 📌 1. Domain Proyek: Entertainment & Personalized Recommendation
 
-Industri hiburan digital mengalami lonjakan konsumsi konten selama dekade terakhir, khususnya film dan serial yang tersedia di berbagai platform streaming seperti Netflix, Disney+, dan Amazon Prime. Dalam era banjir informasi ini, pengguna sering mengalami kesulitan dalam memilih tontonan yang sesuai dengan preferensi mereka.
+Industri hiburan digital, khususnya film dan serial di platform streaming seperti Netflix, Disney+, dan Amazon Prime, telah mengalami pertumbuhan pesat dalam satu dekade terakhir. Seiring dengan meningkatnya jumlah konten yang tersedia, pengguna kerap mengalami kesulitan dalam menentukan tontonan yang sesuai dengan preferensi mereka (Gómez-Uribe & Hunt, 2016).
 
-Salah satu solusi untuk permasalahan ini adalah sistem rekomendasi film yang cerdas, yang dapat mempelajari kebiasaan pengguna dan menyarankan konten yang relevan. Menurut Ricci, Rokach, dan Shapira (2015), collaborative filtering terbukti menjadi salah satu pendekatan paling efektif dalam memahami pola minat pengguna, karena teknik ini dapat menghasilkan rekomendasi hanya berdasarkan interaksi pengguna seperti rating dan ulasan, tanpa memerlukan analisis konten film.
+Untuk mengatasi tantangan ini, sistem rekomendasi cerdas menjadi solusi utama. Sistem ini bertujuan untuk memahami pola interaksi pengguna terhadap konten, lalu menghasilkan rekomendasi yang relevan secara personal. Salah satu pendekatan yang semakin populer dan fleksibel dalam pengembangan sistem rekomendasi modern adalah **deep learning** (Zhang et al., 2019).
 
-Lebih lanjut, penelitian oleh Koren, Bell, dan Volinsky (2009) menunjukkan bahwa pendekatan *matrix factorization* dalam collaborative filtering mampu secara signifikan meningkatkan akurasi prediksi sistem rekomendasi, terutama dalam konteks dataset skala besar seperti MovieLens.
+Berbeda dengan metode tradisional seperti *matrix factorization*, pendekatan berbasis **deep neural networks** mampu menangkap **hubungan non-linear yang kompleks** antara pengguna dan item (film). Teknik ini memungkinkan sistem untuk menggabungkan berbagai jenis informasi—baik interaksi eksplisit seperti rating, maupun fitur tambahan seperti tahun rilis dan metadata lainnya—dalam satu arsitektur terpadu (Cheng et al., 2016).
 
-Proyek ini bertujuan untuk membangun sistem rekomendasi film berbasis collaborative filtering menggunakan data dari Kaggle (Sayan0211, 2022). Dataset ini berisi rating dari pengguna terhadap berbagai film, yang kemudian digunakan untuk memprediksi preferensi pengguna lain terhadap film yang belum mereka tonton.
+Dalam proyek ini, dibangun sebuah sistem rekomendasi film berbasis **custom neural network**, yang dilatih menggunakan data rating film dari Kaggle (Sayan0211, 2022). Model ini dirancang untuk:
 
+* Menggunakan **embedding layer** guna merepresentasikan pengguna dan film ke dalam vektor berdimensi rendah.
+* Menangkap **interaksi eksplisit** antara pengguna dan film melalui operasi seperti *dot product* dan *element-wise multiplication*.
+* Memanfaatkan **fitur tambahan** (contoh: tahun rilis, rating sebelumnya) untuk meningkatkan akurasi prediksi.
 
+Dengan kemampuan deep learning yang tinggi dalam menangkap pola laten kompleks, model ini diharapkan dapat memberikan rekomendasi film yang lebih akurat, relevan, dan personal bagi setiap pengguna.
 
 ---
 
@@ -243,8 +248,10 @@ Berikut adalah **penjelasan lengkap model custom Neural Network (NN)** yang Anda
 
 ---
 
-## 7. Modelling
+## ⚙️ 7. Model Recommendation System
+
 🔹 Model : **Custom Neural Network for Rating Prediction*
+
 ### ✅ Alasan Pemilihan:
 
 Model ini dirancang khusus untuk menangani data **user-item interaction**, seperti sistem rekomendasi film berbasis rating. Model menggabungkan teknik **embedding**, **interaksi eksplisit (dot product dan element-wise multiply)**, serta **informasi tambahan** (seperti rating sebelumnya dan tahun rilis) dalam arsitektur neural network. Pendekatan ini jauh lebih fleksibel dan mampu **menangkap representasi latar belakang pengguna dan film** secara simultan.
@@ -342,7 +349,7 @@ Layers:
 
 ---
 
-## 📊 Evaluasi Model
+## 📊 8. Evaluasi Model
 
 Dalam sistem rekomendasi berbasis prediksi rating, penting untuk mengetahui seberapa dekat prediksi model dengan rating aktual yang diberikan oleh pengguna. Oleh karena itu, digunakan beberapa metrik evaluasi untuk menilai performa model secara menyeluruh, baik dari segi kesalahan absolut, penyebaran prediksi, hingga kekuatan hubungan antara nilai prediksi dan aktual.
 
@@ -450,6 +457,99 @@ Embedding pengguna dan film digunakan untuk merepresentasikan identitas masing-m
 #### 3. **Sejauh mana pendekatan ini mampu memberikan rekomendasi yang akurat, dan bagaimana kualitas prediksi diukur menggunakan metrik evaluasi seperti RMSE, MAE, R², dan korelasi?**
 
 Model yang dibangun menunjukkan performa yang cukup baik dalam melakukan prediksi rating. Berdasarkan hasil evaluasi terhadap data uji, diperoleh skor **RMSE sebesar 0.8075**, **MAE sebesar 0.6163**, dan **R² sebesar 0.4044**. Nilai RMSE dan MAE menunjukkan bahwa rata-rata kesalahan prediksi berada di bawah 1 poin skala rating, sedangkan nilai R² menunjukkan bahwa model mampu menjelaskan sekitar 40% variansi dalam data rating aktual. Di sisi lain, nilai korelasi **Pearson sebesar 0.6389** dan **Spearman sebesar 0.6297** menunjukkan adanya hubungan linier dan ranking yang cukup kuat antara prediksi model dan data aktual. Hasil ini menunjukkan bahwa pendekatan deep learning yang digunakan memiliki efektivitas yang cukup baik dalam menangkap pola preferensi pengguna dan memberikan rekomendasi yang relevan.
+
+---
+
+## 📏 9. Kesimpulan
+
+berdasarkan hasil evaluasi berikut:
+
+| **Metrik**   | **Nilai** |
+| ------------ | --------- |
+| **RMSE**     | 0.8075    |
+| **MAE**      | 0.6163    |
+| **R²**       | 0.4044    |
+| **Pearson**  | 0.6389    |
+| **Spearman** | 0.6297    |
+
+### 🔍 Interpretasi Hasil:
+
+* **RMSE dan MAE** berada di bawah angka 1, menandakan kesalahan prediksi rata-rata yang cukup rendah terhadap rentang rating (biasanya 0–5). RMSE yang sedikit lebih tinggi dari MAE menunjukkan bahwa model masih sensitif terhadap outlier, namun secara umum tetap cukup akurat.
+* **R² sebesar 0.4044** menunjukkan bahwa model mampu menjelaskan sekitar 40% variansi dari data rating aktual. Ini adalah pencapaian yang **cukup kuat** untuk domain sistem rekomendasi, yang umumnya memiliki banyak noise dan subjektivitas tinggi pada rating pengguna.
+* **Korelasi Pearson dan Spearman di atas 0.6** mengindikasikan hubungan yang **kuat** antara prediksi model dan rating aktual, baik secara linier maupun berdasarkan urutan/ranking.
+
+---
+
+### 📌 Final Insight:
+
+Pendekatan deep learning yang digunakan **mampu menangkap preferensi pengguna secara cukup akurat**, dengan menggabungkan representasi embedding dari pengguna dan film, serta memperkaya informasi melalui metadata. Meskipun interpretabilitasnya lebih rendah dibanding model tradisional seperti XGBoost atau Linear Regression, kemampuan generalisasi dan fleksibilitas struktur neural network memberikan hasil yang **kuat, stabil, dan scalable**.
+
+### 🛠️ Potensi Pengembangan Lanjutan:
+
+1. **Tambahkan Fitur Kontekstual**: Lokasi, waktu tonton, perangkat yang digunakan, genre favorit, dll.
+2. **Gunakan Pre-trained Embedding**: Untuk metadata seperti sinopsis atau genre menggunakan NLP embedding (misalnya BERT, FastText).
+3. **Bayesian Personalized Ranking (BPR)**: Alternatif loss function untuk memaksimalkan ranking dibanding hanya prediksi rating numerik.
+4. **Integrasi Attention Mechanism**: Untuk fokus pada fitur penting selama prediksi.
+5. **Hyperparameter Tuning Lanjutan**: Menggunakan Bayesian Optimization atau Hyperband untuk hasil lebih optimal.
+
+
+## 📚 10. Referensi
+
+* Gómez-Uribe, C. A., & Hunt, N. (2016). *The Netflix Recommender System: Algorithms, Business Value, and Innovation*. ACM Transactions on Management Information Systems (TMIS), 6(4), 13.[Link Article](https://dl.acm.org/doi/10.1145/2843948)
+* Zhang, S., Yao, L., Sun, A., & Tay, Y. (2019). *Deep Learning based Recommender System: A Survey and New Perspectives*. ACM Computing Surveys (CSUR), 52(1), 1-38.[Link Article](https://dl.acm.org/doi/10.1145/3285029)
+* Cheng, H.-T., Koc, L., Harmsen, J., Shaked, T., Chandra, T., Aradhye, H., ... & Anil, R. (2016). *Wide & Deep Learning for Recommender Systems*. In *Proceedings of the 1st Workshop on Deep Learning for Recommender Systems* (pp. 7–10).[Link Article](https://dl.acm.org/doi/10.1145/2988450.29884540)
+* Sayan0211. (2022). *MovieLens Dataset for Recommendation Systems*. [Kaggle Dataset](https://www.kaggle.com/datasets/sayan0211/movielens-dataset)
+
+---
+
+## 🗂️ 11. Struktur Folder & Cara Penggunaan
+
+Untuk mempermudah navigasi dan pengelolaan proyek, struktur direktori dibagi menjadi beberapa folder dan file utama sebagai berikut:
+
+```text
+├── data
+│   ├── data.csv           # Data gabungan hasil preprocessing (siap untuk modeling)
+│   ├── movies.csv         # Dataset mentah berisi informasi film
+│   ├── rating.csv         # Dataset mentah berisi rating pengguna
+│
+├── models
+│   ├── final_model.keras  # Model hasil training terbaik yang disimpan
+│
+├── notebook
+│   ├── main.ipynb         # Notebook utama untuk pelatihan dan pengujian model
+│   └── preprocessing.ipynb # Notebook untuk pembersihan dan penggabungan data mentah
+│
+├── main.py                # Script utama untuk menjalankan keseluruhan pipeline
+├── README.md              # Deskripsi umum proyek
+└── requirements.txt       # Daftar dependensi Python yang diperlukan
+```
+
+---
+
+### ▶️ Cara Menjalankan Proyek
+
+Untuk menjalankan proyek ini secara keseluruhan, ikuti langkah-langkah berikut:
+
+1. **Install Library yang Diperlukan**
+   Pastikan Anda telah meng-install semua dependensi dengan menjalankan perintah berikut di terminal:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Lakukan Preprocessing Terlebih Dahulu**
+   Sebelum menjalankan `main.py`, Anda **wajib** menjalankan notebook `preprocessing.ipynb` terlebih dahulu untuk menghasilkan file `data.csv` yang diperlukan untuk pelatihan model.
+
+3. **Pilih Cara Menjalankan: Otomatis atau Manual**
+
+   🔹 Jika Anda ingin melihat **proses secara bertahap**, seperti pembersihan data, pelatihan model, dan evaluasi, Anda dapat menjalankan notebook `preprocessing.ipynb` dan `main.ipynb` secara manual melalui Jupyter Notebook atau VSCode.
+
+   🔹 Namun, jika Anda ingin langsung melihat **hasil akhir dari seluruh pipeline** secara otomatis, Anda bisa menjalankan file:
+
+   ```bash
+   python main.py
+   ```
+
 
 
 
