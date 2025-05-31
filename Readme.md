@@ -516,9 +516,7 @@ Untuk mempermudah navigasi dan pengelolaan proyek, struktur direktori dibagi men
 │   ├── final_model.keras  # Model hasil training terbaik yang disimpan
 │   └── best_model.h5      # Sebagai checkpoint model ketika sedang di train
 ├── notebook
-│   ├── main.ipynb         # Notebook utama untuk pelatihan dan pengujian model
-│   └── preprocessing.ipynb # Notebook untuk pembersihan dan penggabungan data mentah
-│
+│   └── main.ipynb # Notebook untuk pembersihan data dan pembuatan model │
 ├── main.py                # Script utama untuk menjalankan keseluruhan pipeline
 ├── README.md              # Deskripsi umum proyek
 └── requirements.txt       # Daftar dependensi Python yang diperlukan
