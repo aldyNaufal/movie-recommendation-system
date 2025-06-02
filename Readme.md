@@ -244,13 +244,9 @@ Dengan pendekatan **berbasis data dan domain knowledge** ini, data sudah disiapk
 
 ---
 
-Berikut adalah **penjelasan lengkap model custom Neural Network (NN)** yang Anda buat, dengan gaya yang **selaras** dengan struktur dokumentasi model sebelumnya:
-
----
-
 ## ⚙️ 7. Model Recommendation System
 
-🔹 Model : **Custom Neural Network for Rating Prediction*
+🔹 Model: **Custom Neural Network for Rating Prediction**
 
 ### ✅ Alasan Pemilihan:
 
@@ -340,6 +336,21 @@ Layers:
 
 ---
 
+### 💾 Penyimpanan dan Pemanggilan Model
+
+Untuk memastikan model dapat digunakan kembali tanpa perlu dilatih ulang, model disimpan lengkap beserta arsitektur, bobot, dan optimizer state-nya:
+
+```python
+# Simpan model (arsitektur + bobot + optimizer state)
+model.save("../models/final_model.keras")
+
+# Load model yang telah disimpan
+from tensorflow import keras
+loaded_model = keras.models.load_model("../models/final_model.keras")
+```
+
+---
+
 ### 📌 Summary:
 
 | Model            | Pola yang Bisa Ditangkap           | Tuning                | Interpretasi | Outlier Friendly | Hasil Akhir     |
@@ -351,149 +362,177 @@ Layers:
 
 ## 📊 8. Evaluasi Model
 
-Dalam sistem rekomendasi berbasis prediksi rating, penting untuk mengetahui seberapa dekat prediksi model dengan rating aktual yang diberikan oleh pengguna. Oleh karena itu, digunakan beberapa metrik evaluasi untuk menilai performa model secara menyeluruh, baik dari segi kesalahan absolut, penyebaran prediksi, hingga kekuatan hubungan antara nilai prediksi dan aktual.
+
+Dalam sistem rekomendasi berbasis prediksi rating, penting untuk mengukur seberapa akurat model dalam menebak rating yang akan diberikan pengguna terhadap item tertentu. Oleh karena itu, digunakan **beragam metrik evaluasi** untuk memberikan gambaran menyeluruh mengenai performa model — mulai dari besarnya kesalahan, tingkat hubungan antara prediksi dan data aktual, hingga kemampuan model menjelaskan variasi data.
+
+---
 
 ### 🎯 Alasan Penggunaan Metrik
 
-Metrik evaluasi dipilih berdasarkan sifat prediksi regresi dari model rekomendasi ini (yaitu memprediksi skor rating numerik). Setiap metrik memberikan perspektif yang berbeda:
+Karena model yang digunakan bersifat **regresif** (memproduksi angka kontinu sebagai output), maka metrik yang dipilih adalah metrik yang relevan untuk regresi:
 
-* **RMSE** dan **MAE** digunakan untuk mengukur seberapa besar kesalahan prediksi model secara absolut dan akar kuadrat rata-rata.
-* **R² (Koefisien Determinasi)** mengukur proporsi variansi rating aktual yang dapat dijelaskan oleh prediksi model.
-* **Pearson correlation** dan **Spearman correlation** mengukur kekuatan hubungan antara prediksi dan nilai aktual secara linier maupun ordinal.
-
----
-
-### 📐 Rumus Metrik Evaluasi
-
-Berikut adalah definisi matematis dari metrik yang digunakan:
-
-#### 1. Root Mean Square Error (RMSE)
-
-RMSE mengukur rata-rata kesalahan prediksi kuadrat dan sangat sensitif terhadap kesalahan besar.
-
-$$
-\text{RMSE} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}
-$$
-
-> Di mana $y_i$ adalah rating aktual, dan $\hat{y}_i$ adalah rating prediksi ke-i.
-
-#### 2. Mean Absolute Error (MAE)
-
-MAE menghitung rata-rata dari semua kesalahan absolut antara prediksi dan nilai aktual.
-
-$$
-\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|
-$$
-
-> MAE lebih tahan terhadap outlier dibanding RMSE.
-
-#### 3. Coefficient of Determination (R²)
-
-R² menunjukkan seberapa besar variansi dalam data target yang dapat dijelaskan oleh model.
-
-$$
-R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2}
-$$
-
-> Nilai $R^2$ berkisar dari $-\infty$ hingga 1. Semakin mendekati 1, semakin baik model menjelaskan variansi data.
-
-#### 4. Pearson Correlation Coefficient (ρ)
-
-Pearson mengukur korelasi linier antara prediksi dan data aktual.
-
-$$
-\rho = \frac{\sum (y_i - \bar{y})(\hat{y}_i - \bar{\hat{y}})}{\sqrt{\sum (y_i - \bar{y})^2} \sqrt{\sum (\hat{y}_i - \bar{\hat{y}})^2}}
-$$
-
-> Nilai berkisar dari -1 hingga 1. Nilai positif tinggi menunjukkan hubungan linier yang kuat.
-
-#### 5. Spearman Rank Correlation (ρₛ)
-
-Spearman mengukur hubungan monoton antar dua variabel dengan melihat peringkat, bukan nilai asli.
-
-$$
-\rho_s = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)}
-$$
-
-> Di mana $d_i$ adalah selisih antara peringkat prediksi dan aktual. Cocok ketika urutan lebih penting dari nilai absolut.
+* **RMSE** dan **MAE** untuk melihat seberapa jauh prediksi menyimpang dari nilai aktual.
+* **R² (Koefisien Determinasi)** untuk menilai seberapa baik model menjelaskan variansi dari data asli.
+* **Pearson** dan **Spearman correlation** untuk mengukur kekuatan hubungan antara nilai prediksi dan nilai sebenarnya, baik secara linier maupun berdasarkan ranking.
 
 ---
 
-### 📌 Kesimpulan Pemilihan Metrik
+### 📐 Ringkasan Rumus Metrik
 
-Kombinasi metrik ini memungkinkan evaluasi dari berbagai sudut pandang:
-
-* **RMSE** menangkap seberapa besar kesalahan besar berdampak ke model.
-* **MAE** memberi gambaran langsung rata-rata kesalahan tanpa efek kuadrat.
-* **R²** menunjukkan kemampuan model dalam menjelaskan data.
-* **Pearson** dan **Spearman** menilai kekuatan hubungan prediksi dan target, penting ketika mempertimbangkan urutan dan hubungan linier rating.
-
-Melalui hasil evaluasi berikut:
-
-* **RMSE**: 0.8075
-* **MAE**: 0.6163
-* **R²**: 0.4044
-* **Pearson**: 0.6389
-* **Spearman**: 0.6297
-
-dapat disimpulkan bahwa model berhasil membangun hubungan yang cukup kuat antara fitur input dengan output rating pengguna, serta cukup efektif dalam merepresentasikan pola preferensi pengguna dalam sistem rekomendasi.
+| Metrik       | Makna                                                                            |
+| ------------ | -------------------------------------------------------------------------------- |
+| **RMSE**     | Rata-rata akar kuadrat kesalahan prediksi. Peka terhadap outlier.                |
+| **MAE**      | Rata-rata kesalahan absolut. Lebih stabil terhadap nilai ekstrem.                |
+| **R²**       | Proporsi variansi yang bisa dijelaskan model. Semakin mendekati 1, semakin baik. |
+| **Pearson**  | Korelasi linier antara prediksi dan data aktual.                                 |
+| **Spearman** | Korelasi berbasis ranking (monoton), penting untuk melihat urutan preferensi.    |
 
 ---
 
-### Kesimpulan Hasil Evaluasi 
+### 📊 Hasil Evaluasi Model
 
-#### 1. **Bagaimana membangun sistem rekomendasi film menggunakan pendekatan deep learning untuk menangkap pola preferensi pengguna dari data rating dan metadata film?**
-
-Sistem rekomendasi dibangun menggunakan pendekatan deep learning berbasis **collaborative filtering**, di mana dua jenis embedding — untuk pengguna dan film — digunakan untuk menangkap hubungan laten antara pengguna dan preferensi film. Selain itu, informasi numerik tambahan seperti **rating film rata-rata** dan **tahun rilis film** digunakan sebagai fitur pendukung (metadata film) yang dikombinasikan melalui arsitektur neural network berlapis. Model ini dirancang untuk belajar dari pola rating historis yang diberikan pengguna terhadap film-film tertentu, sehingga mampu memprediksi rating baru yang kemungkinan besar akan diberikan pengguna terhadap film lainnya.
-
----
-
-#### 2. **Bagaimana memanfaatkan embedding pengguna dan film serta fitur tambahan seperti rating film dan tahun rilis untuk meningkatkan akurasi prediksi rating?**
-
-Embedding pengguna dan film digunakan untuk merepresentasikan identitas masing-masing dalam bentuk vektor berdimensi tetap, yang memungkinkan model mengenali hubungan kompleks antar entitas tersebut. Kombinasi dari **dot product** dan **element-wise multiplication** antara embedding pengguna dan film kemudian digabungkan dengan fitur numerik tambahan — yaitu **skor rata-rata film (`movie_rating_scaled`)** dan **tahun rilis (`year_scaled`)**. Seluruh fitur ini dikonsolidasikan ke dalam jaringan neural network berlapis (Dense Layer) dengan aktivasi ReLU dan regularisasi (dropout dan L2), sehingga meningkatkan kemampuan model dalam menangkap informasi relevan dari data heterogen, dan secara empiris membantu meningkatkan akurasi prediksi.
+| Metrik                   | Nilai  |
+| ------------------------ | ------ |
+| **RMSE**                 | 0.8062 |
+| **MAE**                  | 0.6153 |
+| **R² (Determination)**   | 0.4064 |
+| **Pearson Correlation**  | 0.6407 |
+| **Spearman Correlation** | 0.6305 |
 
 ---
 
-#### 3. **Sejauh mana pendekatan ini mampu memberikan rekomendasi yang akurat, dan bagaimana kualitas prediksi diukur menggunakan metrik evaluasi seperti RMSE, MAE, R², dan korelasi?**
+### 🧠 Interpretasi Hasil
 
-Model yang dibangun menunjukkan performa yang cukup baik dalam melakukan prediksi rating. Berdasarkan hasil evaluasi terhadap data uji, diperoleh skor **RMSE sebesar 0.8075**, **MAE sebesar 0.6163**, dan **R² sebesar 0.4044**. Nilai RMSE dan MAE menunjukkan bahwa rata-rata kesalahan prediksi berada di bawah 1 poin skala rating, sedangkan nilai R² menunjukkan bahwa model mampu menjelaskan sekitar 40% variansi dalam data rating aktual. Di sisi lain, nilai korelasi **Pearson sebesar 0.6389** dan **Spearman sebesar 0.6297** menunjukkan adanya hubungan linier dan ranking yang cukup kuat antara prediksi model dan data aktual. Hasil ini menunjukkan bahwa pendekatan deep learning yang digunakan memiliki efektivitas yang cukup baik dalam menangkap pola preferensi pengguna dan memberikan rekomendasi yang relevan.
-
----
-
-## 📏 9. Kesimpulan
-
-berdasarkan hasil evaluasi berikut:
-
-| **Metrik**   | **Nilai** |
-| ------------ | --------- |
-| **RMSE**     | 0.8075    |
-| **MAE**      | 0.6163    |
-| **R²**       | 0.4044    |
-| **Pearson**  | 0.6389    |
-| **Spearman** | 0.6297    |
-
-### 🔍 Interpretasi Hasil:
-
-* **RMSE dan MAE** berada di bawah angka 1, menandakan kesalahan prediksi rata-rata yang cukup rendah terhadap rentang rating (biasanya 0–5). RMSE yang sedikit lebih tinggi dari MAE menunjukkan bahwa model masih sensitif terhadap outlier, namun secara umum tetap cukup akurat.
-* **R² sebesar 0.4044** menunjukkan bahwa model mampu menjelaskan sekitar 40% variansi dari data rating aktual. Ini adalah pencapaian yang **cukup kuat** untuk domain sistem rekomendasi, yang umumnya memiliki banyak noise dan subjektivitas tinggi pada rating pengguna.
-* **Korelasi Pearson dan Spearman di atas 0.6** mengindikasikan hubungan yang **kuat** antara prediksi model dan rating aktual, baik secara linier maupun berdasarkan urutan/ranking.
+* **RMSE = 0.8062** menandakan bahwa secara rata-rata, prediksi model meleset sekitar ±0.8 poin dari nilai rating aktual, yang cukup baik mengingat skala rating (biasanya 1–5).
+* **MAE = 0.6153** menunjukkan bahwa secara umum kesalahan model tetap rendah dan stabil terhadap outlier.
+* **R² = 0.4064** berarti bahwa sekitar **40.64% variasi rating aktual dapat dijelaskan oleh prediksi model**, menunjukkan kemampuan generalisasi yang cukup baik, walau masih ada ruang untuk perbaikan.
+* **Pearson = 0.6407** dan **Spearman = 0.6305** menunjukkan adanya **hubungan yang kuat dan positif** antara prediksi dan data aktual, baik dari segi nilai maupun urutan/ranking preferensi.
 
 ---
 
-### 📌 Final Insight:
+### ✅ Kesimpulan Evaluasi
 
-Pendekatan deep learning yang digunakan **mampu menangkap preferensi pengguna secara cukup akurat**, dengan menggabungkan representasi embedding dari pengguna dan film, serta memperkaya informasi melalui metadata. Meskipun interpretabilitasnya lebih rendah dibanding model tradisional seperti XGBoost atau Linear Regression, kemampuan generalisasi dan fleksibilitas struktur neural network memberikan hasil yang **kuat, stabil, dan scalable**.
+Model **berhasil menangkap pola preferensi pengguna** terhadap film dengan akurasi prediksi yang cukup memuaskan. Skor korelasi yang tinggi mengindikasikan bahwa model bukan hanya mampu mendekati rating aktual, tapi juga mampu **mempertahankan urutan preferensi antar item** — suatu aspek penting dalam sistem rekomendasi.
 
-### 🛠️ Potensi Pengembangan Lanjutan:
+---
 
-1. **Tambahkan Fitur Kontekstual**: Lokasi, waktu tonton, perangkat yang digunakan, genre favorit, dll.
-2. **Gunakan Pre-trained Embedding**: Untuk metadata seperti sinopsis atau genre menggunakan NLP embedding (misalnya BERT, FastText).
-3. **Bayesian Personalized Ranking (BPR)**: Alternatif loss function untuk memaksimalkan ranking dibanding hanya prediksi rating numerik.
-4. **Integrasi Attention Mechanism**: Untuk fokus pada fitur penting selama prediksi.
-5. **Hyperparameter Tuning Lanjutan**: Menggunakan Bayesian Optimization atau Hyperband untuk hasil lebih optimal.
+### 💡 Jawaban atas Pertanyaan Penelitian
+
+#### 1. **Bagaimana memberikan rekomendasi film yang relevan untuk pengguna baru maupun lama berdasarkan riwayat rating pengguna lain?**
+
+Model deep learning yang dikembangkan menggunakan pendekatan **collaborative filtering berbasis embedding**, di mana **representasi vektor laten** dibentuk untuk setiap pengguna dan film. Model ini belajar dari **riwayat interaksi pengguna lain** untuk menangkap pola umum preferensi terhadap item. Meskipun model ini lebih cocok untuk pengguna yang sudah memberikan riwayat rating (user lama), akurasinya tetap terjaga karena dapat memetakan pengguna baru ke ruang embedding melalui **informasi metadata**, seperti tahun rilis dan rating film.
+
+Untuk pengguna baru tanpa riwayat rating (cold-start problem), pendekatan ini bisa diperluas dengan:
+
+* Menambahkan fitur kontekstual lain (misalnya genre, sinopsis, atau demografi pengguna),
+* Menggabungkan pendekatan hybrid dengan content-based filtering.
+
+Dengan demikian, sistem dapat **memberikan rekomendasi yang relevan baik untuk pengguna baru maupun lama**, berdasarkan **kemiripan embedding dan pola rating pengguna lain**.
+
+---
+
+#### 2. **Bagaimana membangun model *collaborative filtering* berbasis deep learning untuk mengatasi masalah *sparsity* pada data rating film?**
+
+Model dirancang dengan memanfaatkan **embedding pengguna dan film** untuk menangkap relasi laten antara keduanya meskipun jumlah interaksi sangat terbatas (sparse). Penggunaan **dot product dan element-wise interaction** antara embedding, ditambah beberapa lapisan fully connected, memungkinkan model menggeneralisasi dengan baik meskipun banyak entri dalam matriks user-item yang kosong.
+
+Dibanding metode tradisional, pendekatan ini:
+
+* Lebih fleksibel terhadap sparsity karena tidak mengandalkan seluruh matriks secara eksplisit,
+* Dapat dilatih secara end-to-end tanpa perlu dekomposisi manual.
+
+---
+
+#### 3. **Bagaimana memanfaatkan informasi tambahan seperti tahun rilis dan rating film sebagai fitur untuk meningkatkan akurasi model?**
+
+Fitur tambahan seperti `movie_rating_scaled` dan `year_scaled` ditambahkan sebagai **input numerik eksplisit** yang dikombinasikan dengan hasil interaksi embedding. Proses ini dilakukan dengan menggabungkan seluruh informasi ke dalam **vector input gabungan**, yang kemudian diproses melalui beberapa dense layer.
+
+Hasil evaluasi menunjukkan bahwa:
+
+* Penambahan metadata **berkontribusi terhadap peningkatan akurasi**, dibuktikan dengan nilai RMSE dan MAE yang rendah,
+* Informasi seperti **tahun rilis** dan **rating rata-rata film** bersifat umum dan dapat membantu menjembatani pengguna baru atau film dengan interaksi minim.
 
 
-## 📚 10. Referensi
+---
+
+## 🎯 9. Inferensi Testing dan Rekomendasi Personal
+
+Setelah model selesai dilatih dan dievaluasi, tahap selanjutnya adalah melakukan **inferensi** untuk pengguna tertentu. Tujuannya adalah melihat sejauh mana model mampu memberikan rekomendasi personal, mirip dengan cara kerja sistem rekomendasi seperti Netflix.
+
+### 🔹 Prosedur:
+
+1. **Pilih Target User**:
+   User dipilih berdasarkan ID nyata dari dataset (contoh: `userId = 1`).
+
+2. **Filter Film yang Belum Pernah Ditonton**:
+   Sistem akan menyaring film yang **belum pernah ditonton** oleh user tersebut.
+
+3. **Persiapan Input untuk Model**:
+   Semua input seperti `user_id`, `movie_id`, `movie_rating`, dan `year` disesuaikan dan diskalakan menggunakan `StandardScaler` yang telah dilatih sebelumnya.
+
+4. **Prediksi Rating**:
+   Model akan memprediksi rating potensial untuk setiap film yang belum ditonton user.
+
+5. **Tampilkan 10 Rekomendasi Terbaik**:
+   Film dengan rating prediksi tertinggi ditampilkan dalam format mirip Netflix.
+
+### 🔸 Hasil:
+
+Berikut contoh hasil inferensi untuk user dengan ID `1`:
+
+```text
+🎬 NETFLIX-STYLE RECOMMENDATIONS FOR USER 1
+================================================================================
+ 1. 🎬 villain (1971)
+    ⭐ IMDB: 5.0/10 | 🎭 crime,drama,thriller
+
+ 2. 🎬 down argentine way (1940)
+    ⭐ IMDB: 5.0/10 | 🎭 comedy,drama,romance
+
+...
+10. 🎬 mickey's once upon a christmas (1999)
+    ⭐ IMDB: 5.0/10 | 🎭 animation,comedy,fantasy
+
+📊 Evaluated 9479 movies
+🎯 Found 10 good matches
+```
+
+### 📌 Catatan:
+
+* Proses ini menggunakan **model yang telah disimpan** (`loaded_model`) dan **dictionary encoding** (`user_id_to_encoded`, dll).
+* Rekomendasi dapat berubah tergantung pada parameter pelatihan atau preferensi pengguna.
+
+---
+
+## 📏 10. Kesimpulan
+
+Penelitian ini berhasil membangun sebuah sistem rekomendasi berbasis deep learning yang memprediksi rating film dari pengguna menggunakan pendekatan **collaborative filtering dengan embedding**, serta memanfaatkan **metadata tambahan** seperti skor rata-rata film dan tahun rilis. Evaluasi dilakukan untuk mengukur performa model dari berbagai perspektif: kesalahan prediksi, korelasi, dan kekuatan generalisasi.
+
+### 🔍 Temuan Utama:
+
+* **Model menunjukkan akurasi yang stabil dan cukup baik**, dengan nilai RMSE sebesar **0.8075** dan MAE sebesar **0.6163**, menandakan rata-rata kesalahan prediksi yang rendah terhadap rentang rating 0–5.
+* **Nilai R² sebesar 0.4044** menunjukkan bahwa model mampu menjelaskan sekitar 40% variansi dalam rating aktual pengguna, yang cukup kompetitif mengingat sifat data rekomendasi yang sangat subjektif dan bervariasi.
+* Korelasi **Pearson (0.6389)** dan **Spearman (0.6297)** menegaskan adanya **hubungan linier dan ordinal yang kuat** antara hasil prediksi dan rating aktual pengguna.
+
+### 🧠 Implikasi:
+
+Penggunaan **embedding pengguna dan film**, dikombinasikan dengan **fitur tambahan (movie\_rating\_scaled dan year\_scaled)** dalam jaringan neural network terbukti dapat **meningkatkan representasi preferensi pengguna secara kompleks dan non-linier**. Hal ini memungkinkan sistem memberikan prediksi yang tidak hanya berdasarkan kecocokan historis, tetapi juga mempertimbangkan informasi kontekstual yang relevan.
+
+### 🚀 Potensi Pengembangan:
+
+Beberapa langkah lanjutan yang direkomendasikan untuk meningkatkan kinerja sistem antara lain:
+
+1. **Menambahkan fitur kontekstual**, seperti waktu tonton, genre favorit, atau data demografis pengguna.
+2. **Integrasi embedding berbasis NLP** seperti BERT untuk memproses sinopsis dan genre film sebagai fitur tambahan.
+3. **Eksperimen dengan loss function alternatif**, seperti **Bayesian Personalized Ranking (BPR)**, yang lebih berfokus pada peringkat preferensi dibanding prediksi rating numerik.
+4. **Penerapan attention mechanism** untuk mengarahkan fokus model pada fitur-fitur paling berpengaruh.
+5. **Hyperparameter tuning lebih canggih** dengan pendekatan seperti **Bayesian Optimization**, guna meningkatkan akurasi dan generalisasi model.
+
+### 📌 Kesimpulan Akhir:
+
+Dengan pendekatan yang diterapkan, sistem rekomendasi yang dibangun telah menunjukkan performa yang **kuat dan dapat diandalkan** untuk memberikan prediksi rating film secara personalized. Walaupun masih terdapat ruang untuk peningkatan, hasil evaluasi menunjukkan bahwa deep learning adalah pendekatan yang **efektif dan fleksibel** dalam menangkap kompleksitas perilaku pengguna pada domain sistem rekomendasi.
+
+---
+## 📚 11. Referensi
 
 * Gómez-Uribe, C. A., & Hunt, N. (2016). *The Netflix Recommender System: Algorithms, Business Value, and Innovation*. ACM Transactions on Management Information Systems (TMIS), 6(4), 13.[Link Article](https://dl.acm.org/doi/10.1145/2843948)
 * Zhang, S., Yao, L., Sun, A., & Tay, Y. (2019). *Deep Learning based Recommender System: A Survey and New Perspectives*. ACM Computing Surveys (CSUR), 52(1), 1-38.[Link Article](https://dl.acm.org/doi/10.1145/3285029)
@@ -502,7 +541,7 @@ Pendekatan deep learning yang digunakan **mampu menangkap preferensi pengguna se
 
 ---
 
-## 🗂️ 11. Struktur Folder & Cara Penggunaan
+## 🗂️ 12. Struktur Folder & Cara Penggunaan
 
 Untuk mempermudah navigasi dan pengelolaan proyek, struktur direktori dibagi menjadi beberapa folder dan file utama sebagai berikut:
 
