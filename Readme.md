@@ -197,7 +197,6 @@ Setelah dilakukan eksplorasi dan penggabungan antara data `movies.csv` dan `rati
 | **Data Mapping**      | Dibuat kamus untuk memetakan `userId` dan `movieId` ke bentuk terenkode dan sebaliknya, untuk keperluan interpretasi hasil prediksi model.                                      |                                                                                                    |
 | **Data Split**        | Dataset dibagi menjadi: **80% train+val**, **20% test**. Kemudian, dari train+val, diambil **10% untuk validasi**, menghasilkan rasio train\:val\:test sebesar **72%:8%:20%**.  |                                                                                                    |
 
----
 
 ### 🧭 Alasan Penggunaan Scaling dan Encoding
 
@@ -205,7 +204,6 @@ Setelah dilakukan eksplorasi dan penggabungan antara data `movies.csv` dan `rati
 
 * **Label Encoding** pada `userId` dan `movieId` diperlukan agar data ID bisa digunakan dalam lapisan embedding model deep learning, tanpa menambah dimensi seperti pada One-Hot Encoding.
 
----
 
 ### ✅ Final Feature yang Digunakan:
 
@@ -217,7 +215,6 @@ Setelah dilakukan eksplorasi dan penggabungan antara data `movies.csv` dan `rati
 | `year`            | Numerik     | Tahun rilis film                          |
 | `rating` (target) | Numerik     | Nilai rating yang diberikan oleh pengguna |
 
----
 
 Dengan pendekatan **berbasis data dan domain knowledge** ini, data sudah disiapkan untuk memasuki tahap **modelling rekomendasi** menggunakan pendekatan pembelajaran terawasi maupun berbasis embedding.
 
