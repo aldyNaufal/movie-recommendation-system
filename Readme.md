@@ -7,8 +7,7 @@
 
 ![movie-banner](images/13067.jpg)
 
-
-## 📌 1. Domain Proyek: Entertainment & Personalized Recommendation
+## 📋1. Project Overview
 
 Industri hiburan digital, khususnya film dan serial di platform streaming seperti Netflix, Disney+, dan Amazon Prime, telah mengalami pertumbuhan pesat dalam satu dekade terakhir. Seiring dengan meningkatnya jumlah konten yang tersedia, pengguna kerap mengalami kesulitan dalam menentukan tontonan yang sesuai dengan preferensi mereka (Gómez-Uribe & Hunt, 2016).
 
@@ -24,27 +23,22 @@ Dalam proyek ini, dibangun sebuah sistem rekomendasi film berbasis **custom neur
 
 Dengan kemampuan deep learning yang tinggi dalam menangkap pola laten kompleks, model ini diharapkan dapat memberikan rekomendasi film yang lebih akurat, relevan, dan personal bagi setiap pengguna.
 
----
-
 ## 🎯 2. Business Understanding
 
-### 🔍 Problem Statements
+#### 🔍 Problem Statements
 
 1. Bagaimana memberikan rekomendasi film yang relevan untuk pengguna baru maupun lama berdasarkan riwayat rating pengguna lain?
 2. Bagaimana membangun model *collaborative filtering* berbasis deep learning untuk mengatasi masalah *sparsity* pada data rating film?
 3. Bagaimana memanfaatkan informasi tambahan seperti tahun rilis dan rating film sebagai fitur untuk meningkatkan akurasi model?
 
----
-
-### 🎯 Objectives 
+#### 🎯 Objectives 
 
 1. **Membangun sistem rekomendasi berbasis deep learning** yang dapat mempelajari representasi laten dari pengguna dan film menggunakan pendekatan *neural collaborative filtering (NCF)*.
 2. **Mengintegrasikan embedding pengguna dan film dengan metadata film**, seperti rating rata-rata film (`movie_rating`) dan tahun rilis (`year`), untuk memperkaya fitur input model dan meningkatkan kualitas prediksi.
 3. **Melakukan evaluasi menyeluruh terhadap model** menggunakan metrik RMSE, MAE, R², serta korelasi Pearson dan Spearman, untuk menilai seberapa akurat dan relevan rekomendasi yang dihasilkan.
 
----
 
-### 💡 Solutions (Revisi)
+#### 💡 Solutions (Revisi)
 
 1. **Merancang dan melatih model rekomendasi menggunakan TensorFlow/Keras**, dengan input multi-fitur: `user_id`, `movie_id`, `movie_rating`, dan `year`. Embedding digunakan untuk memetakan entitas ke dalam representasi vektor yang lebih informatif.
 2. **Menggunakan teknik regularisasi dan callback selama pelatihan**, seperti `Dropout`, `L2 Regularization`, `EarlyStopping`, `ReduceLROnPlateau`, dan `ModelCheckpoint`, untuk mencegah overfitting dan meningkatkan generalisasi model.
@@ -54,18 +48,19 @@ Dengan kemampuan deep learning yang tinggi dalam menangkap pola laten kompleks, 
 
 ---
 
-## 📁 3. Dataset Overview
+## 🔍 3. Data Understanding
+
+### 📁 Dataset Overview
 
 * **Sumber**: Kaggle - [Movie Recomendation pjct by sayan0211](https://www.kaggle.com/datasets/sayan0211/movie-recomendation-pjct)
 * **Jumlah entri rating**: 100.836 baris
 * **Jumlah film**: 9.729 judul unik
 * **Penulis dataset**: sayan0211
 
----
 
-## 📋 4. Fitur Dataset
+### Fitur Dataset
 
-### 📘 `ratings.csv`
+#### 📘 `ratings.csv`
 
 | Kolom       | Tipe    | Deskripsi                                                        |
 | ----------- | ------- | ---------------------------------------------------------------- |
@@ -74,16 +69,13 @@ Dengan kemampuan deep learning yang tinggi dalam menangkap pola laten kompleks, 
 | `rating`    | float64 | Rating yang diberikan pengguna terhadap film (0.5 - 5.0)         |
 | `timestamp` | int64   | Waktu rating diberikan (dalam UNIX timestamp)                    |
 
-### 🎞 `movies.csv` 
+#### 🎞 `movies.csv` 
 | Kolom     | Tipe   | Deskripsi                                    |     |
 | --------- | ------ | -------------------------------------------- | --- |
 | `movieId` | int64  | ID unik film                                 |     |
 | `title`   | object | Judul film                                   |     |
 | `genres`  | object | Genre film (dipisahkan oleh pipe \`          | \`) | 
 
----
-
-## 🔍 5. Data Understanding
 
 ### Statistik Umum:
 
@@ -96,10 +88,6 @@ Dengan kemampuan deep learning yang tinggi dalam menangkap pola laten kompleks, 
   * `genres` sebagai kategori genre film yang sudah dipisah dengan koma dan dalam huruf kecil
 * Tahun rilis film (`year`) memiliki beberapa missing value awalnya (13 baris), namun sudah dihapus dalam pembersihan data.
 
-
-
-
----
 
 ### 🔎 Pemeriksaan Duplikasi dan Missing Value:
 
@@ -124,10 +112,9 @@ data_rating[data_rating.duplicated()]
 
 * Missing value hanya ditemukan di fitur `year` pada dataset film, dengan 13 baris yang hilang.
 
----
+### Visualisasi Data
 
-
-### 1. Distribusi Rating oleh User
+#### 1. Distribusi Rating oleh User
 
 ![Distribusi Rating](images/distribusi_rating_user.png)
 
@@ -138,9 +125,7 @@ data_rating[data_rating.duplicated()]
 * Distribusi ini menunjukkan bahwa pengguna cenderung memberikan rating yang positif atau cukup puas terhadap film-film yang mereka tonton.
 * Adanya kurva KDE (kernel density estimation) juga memperlihatkan variasi rating secara halus, mengindikasikan rating yang tidak terlalu tersebar merata di semua nilai.
 
----
-
-### 2. Rata-rata Rating User per Tahun
+#### 2. Rata-rata Rating User per Tahun
 
 ![Rata-rata Rating User per Tahun](images/rata-rata_rating_user_per_tahun.png)
 
@@ -151,9 +136,7 @@ data_rating[data_rating.duplicated()]
 * Penurunan pada beberapa tahun tertentu mengindikasikan mungkin ada film yang kurang memuaskan di tahun-tahun tersebut.
 * Tren ini bisa membantu mengidentifikasi periode film dengan kualitas rating yang lebih baik atau kurang baik menurut pengguna.
 
----
-
-### 3. Jumlah Film Dirilis per Tahun
+#### 3. Jumlah Film Dirilis per Tahun
 
 ![Jumlah Film Dirilis per Tahun](images/jumlah_film_per_tahun.png)
 
@@ -164,9 +147,7 @@ data_rating[data_rating.duplicated()]
 * Penurunan drastis di akhir grafik bisa jadi karena data film terbaru yang belum lengkap atau ada perubahan tren produksi film.
 * Grafik ini menunjukkan perkembangan industri film yang semakin berkembang pesat di abad ke-20, dengan puncak produksi film di awal abad ke-21.
 
----
-
-### 4. 10 Genre Terbanyak
+#### 4. 10 Genre Terbanyak
 
 ![10 Genre Terbanyak](images/genre_terbanyak.png)
 
@@ -179,11 +160,9 @@ data_rating[data_rating.duplicated()]
 
 ---
 
-## 🧹 6. Data Preparation
+## 🧹 4. Data Preparation
 
 Setelah dilakukan eksplorasi dan penggabungan antara data `movies.csv` dan `ratings.csv`, dilakukan tahap **data preparation** untuk memastikan kualitas data siap untuk digunakan dalam proses pemodelan. Langkah-langkah ini dilakukan secara sistematis berdasarkan temuan eksplorasi data dan kebutuhan algoritma rekomendasi yang akan digunakan.
-
----
 
 ### 📌 Temuan Kunci dan Strategi Preprocessing
 
@@ -201,8 +180,6 @@ Setelah dilakukan eksplorasi dan penggabungan antara data `movies.csv` dan `rati
 
 5. **Rata-Rata Rating Film:**
    Untuk menambahkan informasi global tentang kualitas film, dihitung rata-rata rating (`movie_rating`) dari setiap `movieId`. Ini memberikan konteks tambahan pada film di luar penilaian individu pengguna.
-
----
 
 ### 📋 Rangkuman Langkah-Langkah Preprocessing:
 
@@ -244,15 +221,13 @@ Dengan pendekatan **berbasis data dan domain knowledge** ini, data sudah disiapk
 
 ---
 
-## ⚙️ 7. Model Recommendation System
+## ⚙️ 5. Modeling and Result
 
 🔹 Model: **Custom Neural Network for Rating Prediction**
 
 ### ✅ Alasan Pemilihan:
 
 Model ini dirancang khusus untuk menangani data **user-item interaction**, seperti sistem rekomendasi film berbasis rating. Model menggabungkan teknik **embedding**, **interaksi eksplisit (dot product dan element-wise multiply)**, serta **informasi tambahan** (seperti rating sebelumnya dan tahun rilis) dalam arsitektur neural network. Pendekatan ini jauh lebih fleksibel dan mampu **menangkap representasi latar belakang pengguna dan film** secara simultan.
-
----
 
 ### ⚙️ Cara Kerja:
 
@@ -281,8 +256,6 @@ Model ini bekerja melalui beberapa tahap:
 
    * Lapisan akhir adalah neuron tunggal dengan aktivasi linear (`Dense(1, activation='linear')`) yang merepresentasikan **prediksi rating**.
 
----
-
 ### 🧩 Struktur Arsitektur:
 
 ```text
@@ -304,8 +277,6 @@ Layers:
   - Dense(1) → Output rating
 ```
 
----
-
 ### ✅ Kelebihan:
 
 * **Fleksibel dan powerful**, dapat mempelajari hubungan kompleks antar pengguna dan item.
@@ -313,15 +284,11 @@ Layers:
 * **Mudah dikembangkan lebih lanjut**, misalnya menambah genre, lokasi, waktu tonton, dll.
 * Sudah menggunakan teknik regularisasi modern seperti Dropout dan BatchNormalization.
 
----
-
 ### ❌ Kekurangan:
 
 * **Butuh banyak data** untuk generalisasi yang baik.
 * Interpretasi hasil lebih sulit dibanding model linear atau tree-based.
 * Proses pelatihan lebih lambat, terutama jika data besar.
-
----
 
 ### ⚙️ Konfigurasi Model:
 
@@ -333,8 +300,6 @@ Layers:
 | `l2_reg`        | 0.001                        |
 | `optimizer`     | Adam (default keras compile) |
 | `loss`          | Mean Squared Error (MSE)     |
-
----
 
 ### 💾 Penyimpanan dan Pemanggilan Model
 
@@ -349,7 +314,6 @@ from tensorflow import keras
 loaded_model = keras.models.load_model("../models/final_model.keras")
 ```
 
----
 
 ### 📌 Summary:
 
@@ -358,9 +322,57 @@ loaded_model = keras.models.load_model("../models/final_model.keras")
 | Custom NN (Anda) | Non-linear, Representasi User-Item | ✅ (Manual & Flexible) | ✖️           | ✅                | **Sangat Baik** |
 
 
+### 🎯 Result and Testing
+
+Setelah model selesai dilatih dan dievaluasi, tahap selanjutnya adalah melakukan **inferensi** untuk pengguna tertentu. Tujuannya adalah melihat sejauh mana model mampu memberikan rekomendasi personal, mirip dengan cara kerja sistem rekomendasi seperti Netflix.
+
+#### 🔹 Prosedur:
+
+1. **Pilih Target User**:
+   User dipilih berdasarkan ID nyata dari dataset (contoh: `userId = 1`).
+
+2. **Filter Film yang Belum Pernah Ditonton**:
+   Sistem akan menyaring film yang **belum pernah ditonton** oleh user tersebut.
+
+3. **Persiapan Input untuk Model**:
+   Semua input seperti `user_id`, `movie_id`, `movie_rating`, dan `year` disesuaikan dan diskalakan menggunakan `StandardScaler` yang telah dilatih sebelumnya.
+
+4. **Prediksi Rating**:
+   Model akan memprediksi rating potensial untuk setiap film yang belum ditonton user.
+
+5. **Tampilkan 10 Rekomendasi Terbaik**:
+   Film dengan rating prediksi tertinggi ditampilkan dalam format mirip Netflix.
+
+####🔸 Hasil:
+
+Berikut contoh hasil inferensi untuk user dengan ID `1`:
+
+```text
+🎬 NETFLIX-STYLE RECOMMENDATIONS FOR USER 1
+================================================================================
+ 1. 🎬 villain (1971)
+    ⭐ IMDB: 5.0/10 | 🎭 crime,drama,thriller
+
+ 2. 🎬 down argentine way (1940)
+    ⭐ IMDB: 5.0/10 | 🎭 comedy,drama,romance
+
+...
+10. 🎬 mickey's once upon a christmas (1999)
+    ⭐ IMDB: 5.0/10 | 🎭 animation,comedy,fantasy
+
+📊 Evaluated 9479 movies
+🎯 Found 10 good matches
+```
+
+### 📌 Catatan:
+
+* Proses ini menggunakan **model yang telah disimpan** (`loaded_model`) dan **dictionary encoding** (`user_id_to_encoded`, dll).
+* Rekomendasi dapat berubah tergantung pada parameter pelatihan atau preferensi pengguna.
+
+
 ---
 
-## 📊 8. Evaluasi Model
+## 📊 6. Evaluation
 
 
 Dalam sistem rekomendasi berbasis prediksi rating, penting untuk mengukur seberapa akurat model dalam menebak rating yang akan diberikan pengguna terhadap item tertentu. Oleh karena itu, digunakan **beragam metrik evaluasi** untuk memberikan gambaran menyeluruh mengenai performa model — mulai dari besarnya kesalahan, tingkat hubungan antara prediksi dan data aktual, hingga kemampuan model menjelaskan variasi data.
@@ -451,59 +463,9 @@ Hasil evaluasi menunjukkan bahwa:
 * Penambahan metadata **berkontribusi terhadap peningkatan akurasi**, dibuktikan dengan nilai RMSE dan MAE yang rendah,
 * Informasi seperti **tahun rilis** dan **rating rata-rata film** bersifat umum dan dapat membantu menjembatani pengguna baru atau film dengan interaksi minim.
 
-
 ---
 
-## 🎯 9. Inferensi Testing dan Rekomendasi Personal
-
-Setelah model selesai dilatih dan dievaluasi, tahap selanjutnya adalah melakukan **inferensi** untuk pengguna tertentu. Tujuannya adalah melihat sejauh mana model mampu memberikan rekomendasi personal, mirip dengan cara kerja sistem rekomendasi seperti Netflix.
-
-### 🔹 Prosedur:
-
-1. **Pilih Target User**:
-   User dipilih berdasarkan ID nyata dari dataset (contoh: `userId = 1`).
-
-2. **Filter Film yang Belum Pernah Ditonton**:
-   Sistem akan menyaring film yang **belum pernah ditonton** oleh user tersebut.
-
-3. **Persiapan Input untuk Model**:
-   Semua input seperti `user_id`, `movie_id`, `movie_rating`, dan `year` disesuaikan dan diskalakan menggunakan `StandardScaler` yang telah dilatih sebelumnya.
-
-4. **Prediksi Rating**:
-   Model akan memprediksi rating potensial untuk setiap film yang belum ditonton user.
-
-5. **Tampilkan 10 Rekomendasi Terbaik**:
-   Film dengan rating prediksi tertinggi ditampilkan dalam format mirip Netflix.
-
-### 🔸 Hasil:
-
-Berikut contoh hasil inferensi untuk user dengan ID `1`:
-
-```text
-🎬 NETFLIX-STYLE RECOMMENDATIONS FOR USER 1
-================================================================================
- 1. 🎬 villain (1971)
-    ⭐ IMDB: 5.0/10 | 🎭 crime,drama,thriller
-
- 2. 🎬 down argentine way (1940)
-    ⭐ IMDB: 5.0/10 | 🎭 comedy,drama,romance
-
-...
-10. 🎬 mickey's once upon a christmas (1999)
-    ⭐ IMDB: 5.0/10 | 🎭 animation,comedy,fantasy
-
-📊 Evaluated 9479 movies
-🎯 Found 10 good matches
-```
-
-### 📌 Catatan:
-
-* Proses ini menggunakan **model yang telah disimpan** (`loaded_model`) dan **dictionary encoding** (`user_id_to_encoded`, dll).
-* Rekomendasi dapat berubah tergantung pada parameter pelatihan atau preferensi pengguna.
-
----
-
-## 📏 10. Kesimpulan
+## 📏 7. Kesimpulan
 
 Penelitian ini berhasil membangun sebuah sistem rekomendasi berbasis deep learning yang memprediksi rating film dari pengguna menggunakan pendekatan **collaborative filtering dengan embedding**, serta memanfaatkan **metadata tambahan** seperti skor rata-rata film dan tahun rilis. Evaluasi dilakukan untuk mengukur performa model dari berbagai perspektif: kesalahan prediksi, korelasi, dan kekuatan generalisasi.
 
@@ -532,7 +494,7 @@ Beberapa langkah lanjutan yang direkomendasikan untuk meningkatkan kinerja siste
 Dengan pendekatan yang diterapkan, sistem rekomendasi yang dibangun telah menunjukkan performa yang **kuat dan dapat diandalkan** untuk memberikan prediksi rating film secara personalized. Walaupun masih terdapat ruang untuk peningkatan, hasil evaluasi menunjukkan bahwa deep learning adalah pendekatan yang **efektif dan fleksibel** dalam menangkap kompleksitas perilaku pengguna pada domain sistem rekomendasi.
 
 ---
-## 📚 11. Referensi
+## 📚 8. Referensi
 
 * Gómez-Uribe, C. A., & Hunt, N. (2016). *The Netflix Recommender System: Algorithms, Business Value, and Innovation*. ACM Transactions on Management Information Systems (TMIS), 6(4), 13.[Link Article](https://dl.acm.org/doi/10.1145/2843948)
 * Zhang, S., Yao, L., Sun, A., & Tay, Y. (2019). *Deep Learning based Recommender System: A Survey and New Perspectives*. ACM Computing Surveys (CSUR), 52(1), 1-38.[Link Article](https://dl.acm.org/doi/10.1145/3285029)
@@ -541,7 +503,7 @@ Dengan pendekatan yang diterapkan, sistem rekomendasi yang dibangun telah menunj
 
 ---
 
-## 🗂️ 12. Struktur Folder & Cara Penggunaan
+## 🗂️ 9. Struktur Folder & Cara Penggunaan
 
 Untuk mempermudah navigasi dan pengelolaan proyek, struktur direktori dibagi menjadi beberapa folder dan file utama sebagai berikut:
 
