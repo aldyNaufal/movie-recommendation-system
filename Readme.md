@@ -342,7 +342,7 @@ Setelah model selesai dilatih dan dievaluasi, tahap selanjutnya adalah melakukan
 5. **Tampilkan 10 Rekomendasi Terbaik**:
    Film dengan rating prediksi tertinggi ditampilkan dalam format mirip Netflix.
 
-####🔸 Hasil:
+#### 🔸 Hasil:
 
 Berikut contoh hasil inferensi untuk user dengan ID `1`:
 
