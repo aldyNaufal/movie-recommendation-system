@@ -23,6 +23,8 @@ Dalam proyek ini, dibangun sebuah sistem rekomendasi film berbasis **custom neur
 
 Dengan kemampuan deep learning yang tinggi dalam menangkap pola laten kompleks, model ini diharapkan dapat memberikan rekomendasi film yang lebih akurat, relevan, dan personal bagi setiap pengguna.
 
+---
+
 ## 🎯 2. Business Understanding
 
 #### 🔍 Problem Statements
